@@ -5,11 +5,7 @@ from tqdm import tqdm
 
 def convert_json_to_jsonl(input_json, output_jsonl, chunk_size=10000):
     # Define the necessary fields to keep
-    comments_fields_to_keep = [
-        "author", "subreddit", "link_id", "parent_id", "score", "ups", "downs",
-        "created_utc", "body", "id", "author_flair_text", "controversiality",
-        "subreddit_id", "retrieved_on", "edited"
-    ]
+    comments_fields_to_keep = ["author", "link_id"]
     
     # Estimate total lines for progress bar
     total_lines = sum(1 for _ in open(input_json, 'r', encoding='utf-8'))
