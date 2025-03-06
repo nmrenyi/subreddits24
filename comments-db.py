@@ -25,36 +25,37 @@ def create_table(cursor):
         )
     """)
 
-def insert_data(cursor, jsonl_file):
-    """Reads and inserts data from the JSONL file into the database."""
-    with open(jsonl_file, "r", encoding="utf-8") as file:
-        lines = file.readlines()
+def count_lines(filename):
+    with open(filename, 'rb') as f:
+        return sum(1 for _ in f)
 
-    for line in tqdm(lines, desc="Inserting data", unit="entry"):
-        comment = json.loads(line.strip())
-        # Use -1 for missing numerical values and empty string for text fields
-        cursor.execute("""
-            INSERT OR IGNORE INTO comments 
-            (id, author, subreddit, link_id, parent_id, score, ups, downs, created_utc, body, author_flair_text, 
-             controversiality, subreddit_id, retrieved_on, edited)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            comment.get("id"),
-            comment.get("author", "unknown"),  # Default author to "unknown" if missing
-            comment.get("subreddit", "unknown"),
-            comment.get("link_id", "unknown"),
-            comment.get("parent_id", "unknown"),
-            comment.get("score", -1),  # Default to -1 if missing
-            comment.get("ups", -1.0),  # Default to -1.0 if missing
-            comment.get("downs", -1.0),
-            comment.get("created_utc", -1),
-            comment.get("body", ""),  # Default to empty string if missing
-            comment.get("author_flair_text", ""),  # Default to empty string if missing
-            comment.get("controversiality", -1),
-            comment.get("subreddit_id", ""),
-            comment.get("retrieved_on", -1.0),
-            comment.get("edited") if isinstance(comment.get("edited"), int) else -1  # Default to -1 if missing
-        ))
+def insert_data(cursor, jsonl_file):
+    total_lines = count_lines(jsonl_file)
+    with open(jsonl_file, "r", encoding="utf-8") as file:
+        for line in tqdm(file, desc="Inserting data", unit="entry", total=total_lines):
+            comment = json.loads(line.strip())
+            cursor.execute("""
+                INSERT OR IGNORE INTO comments 
+                (id, author, subreddit, link_id, parent_id, score, ups, downs, created_utc, body, author_flair_text, 
+                 controversiality, subreddit_id, retrieved_on, edited)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                comment.get("id"),
+                comment.get("author", "unknown"),
+                comment.get("subreddit", "unknown"),
+                comment.get("link_id", "unknown"),
+                comment.get("parent_id", "unknown"),
+                comment.get("score", -1),
+                comment.get("ups", -1.0),
+                comment.get("downs", -1.0),
+                comment.get("created_utc", -1),
+                comment.get("body", ""),
+                comment.get("author_flair_text", ""),
+                comment.get("controversiality", -1),
+                comment.get("subreddit_id", ""),
+                comment.get("retrieved_on", -1.0),
+                comment.get("edited") if isinstance(comment.get("edited"), int) else -1
+            ))
 
 def main():
     parser = argparse.ArgumentParser(description="Insert JSONL data into a SQLite database.")
