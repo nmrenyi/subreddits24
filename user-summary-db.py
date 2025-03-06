@@ -39,15 +39,14 @@ def main():
         comments_cursor.execute("SELECT COUNT(*), COUNT(DISTINCT link_id) FROM comments WHERE author = ?", (user,))
         num_comments, num_comments_unique_posts = comments_cursor.fetchone()
 
-        submissions_cursor.execute("SELECT COUNT(*), COUNT(DISTINCT id) FROM posts WHERE author = ?", (user,))
-        num_posts, num_posts_unique = submissions_cursor.fetchone()
+        submissions_cursor.execute("SELECT COUNT(DISTINCT id) FROM posts WHERE author = ?", (user,))
+        num_posts_unique = submissions_cursor.fetchone()
 
         # Append user summary to list
         user_summaries.append({
             'user': user,
             'num_comments': num_comments,
             'num_comments_unique_posts': num_comments_unique_posts,
-            'num_posts': num_posts,
             'num_posts_unique': num_posts_unique
         })
 
