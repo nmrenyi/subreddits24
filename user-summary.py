@@ -26,6 +26,10 @@ users_set.update(comments_df['author'].dropna())
 num_comments_total = len(comments_df)
 num_submissions_total = len(submission_df)
 
+print(f"Total comments: {num_comments_total}")
+print(f"Total submissions: {num_submissions_total}")
+print(f"Total users: {len(users_set)}")
+
 # Initialize list to store user summaries
 user_summaries = []
 
