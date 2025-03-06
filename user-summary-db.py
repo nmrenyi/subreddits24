@@ -59,7 +59,7 @@ def main():
     user_summary_df = pd.DataFrame(user_summaries)
 
     # Include dataset sizes in the output file name
-    output_file = f'{folder}/user_summary_{num_comments_total}comments_{num_submissions_total}posts.tsv'
+    output_file = f'{folder}/user_summary_{num_comments_total}comments_{num_submissions_total}posts_{len(users_set)}users.tsv'
     user_summary_df.to_csv(output_file, sep='\t', index=False)
 
     print(f"User summary saved to {output_file}")
