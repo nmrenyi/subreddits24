@@ -4,24 +4,12 @@ import argparse
 from tqdm import tqdm
 
 def create_table(cursor):
-    """Creates the comments table if it doesn't exist."""
+    """Creates the comments table with only author and link_id."""
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS comments (
             id TEXT PRIMARY KEY,
             author TEXT,
-            subreddit TEXT,
-            link_id TEXT,
-            parent_id TEXT,
-            score INTEGER,
-            ups REAL,
-            downs REAL,
-            created_utc INTEGER,
-            body TEXT,
-            author_flair_text TEXT,
-            controversiality INTEGER,
-            subreddit_id TEXT,
-            retrieved_on REAL,
-            edited INTEGER
+            link_id TEXT
         )
     """)
 
@@ -36,25 +24,12 @@ def insert_data(cursor, jsonl_file):
             comment = json.loads(line.strip())
             cursor.execute("""
                 INSERT OR IGNORE INTO comments 
-                (id, author, subreddit, link_id, parent_id, score, ups, downs, created_utc, body, author_flair_text, 
-                 controversiality, subreddit_id, retrieved_on, edited)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (id, author, link_id)
+                VALUES (?, ?, ?)
             """, (
                 comment.get("id"),
                 comment.get("author", "unknown"),
-                comment.get("subreddit", "unknown"),
-                comment.get("link_id", "unknown"),
-                comment.get("parent_id", "unknown"),
-                comment.get("score", -1),
-                comment.get("ups", -1.0),
-                comment.get("downs", -1.0),
-                comment.get("created_utc", -1),
-                comment.get("body", ""),
-                comment.get("author_flair_text", ""),
-                comment.get("controversiality", -1),
-                comment.get("subreddit_id", ""),
-                comment.get("retrieved_on", -1.0),
-                comment.get("edited") if isinstance(comment.get("edited"), int) else -1
+                comment.get("link_id", "unknown")
             ))
 
 def main():
