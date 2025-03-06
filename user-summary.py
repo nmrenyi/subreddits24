@@ -1,12 +1,21 @@
 import pandas as pd
+import argparse
 from tqdm import tqdm  # Import tqdm for progress bar
 
-# Define folder name
-folder = 'chinesefood'
+# Set up argument parser
+parser = argparse.ArgumentParser(description="Process user comments and submissions data.")
+parser.add_argument("folder", type=str, help="Folder containing the JSONL data files")
+
+# Parse arguments
+args = parser.parse_args()
+folder = args.folder
 
 # Load data
-comments_df = pd.read_json(f'{folder}/{folder}_comments.jsonl', lines=True)
-submission_df = pd.read_json(f'{folder}/{folder}_submissions.jsonl', lines=True)
+comments_file = f"{folder}/{folder}_comments.jsonl"
+submissions_file = f"{folder}/{folder}_submissions.jsonl"
+
+comments_df = pd.read_json(comments_file, lines=True)
+submission_df = pd.read_json(submissions_file, lines=True)
 
 # Extract unique users
 users_set = set()
@@ -43,7 +52,7 @@ for user in tqdm(users_set, desc="Processing Users"):
 user_summary_df = pd.DataFrame(user_summaries)
 
 # Generate output file name with dataset sizes
-output_file = f'{folder}/user_summary_{num_comments_total}comments_{num_submissions_total}posts_{len(users_set)}users.tsv'
+output_file = f"{folder}/user_summary_{num_comments_total}comments_{num_submissions_total}posts_{len(users_set)}users.tsv"
 
 # Export to TSV
 user_summary_df.to_csv(output_file, sep='\t', index=False)
