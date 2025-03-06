@@ -18,6 +18,7 @@ def convert_json_to_tsv(input_json, output_tsv, chunk_size=10000):
         # Estimate total lines for progress bar
         total_lines = sum(1 for _ in open(input_json, 'r', encoding='utf-8'))
         num_chunks = total_lines // chunk_size + 1
+        print(f"Total lines: {total_lines}, processing in chunks of {chunk_size} lines")
         
         # Process the JSON file in chunks using pandas' read_json with chunksize
         try:
