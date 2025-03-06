@@ -15,9 +15,14 @@ def main(folder):
         if col in combined.columns:
             combined[col] = combined[col].astype(int)
 
+    # rename columns to #posts, #comments, #comments_on_unique_posts
+    combined.rename(columns={"Post Count": "#posts", "Comment Count": "#comments", "Unique Posts": "#comments_on_unique_posts"}, inplace=True)
+
+    # adjust the order of the columns to #comments, #comments_on_unique_posts, #posts
+    combined = combined[['Author', '#comments', '#comments_on_unique_posts', '#posts']]
 
     # export to TSV
-    combined.sort_values('Unique Posts', ascending=False).to_csv(f"{folder}/{folder}_user_summary_lean.tsv", sep="\t", index=False)
+    combined.sort_values('#comments_on_unique_posts', ascending=False).to_csv(f"{folder}/{folder}_user_summary_lean.tsv", sep="\t", index=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Count posts per author from a JSONL file and export as TSV.")
