@@ -22,7 +22,7 @@ def main(folder):
     combined = combined[['Author', '#comments', '#comments_on_unique_posts', '#posts']]
 
     # export to TSV
-    combined.sort_values('#comments_on_unique_posts', ascending=False).to_csv(f"{folder}/{folder}_user_summary_lean.tsv", sep="\t", index=False)
+    combined.sort_values('#comments_on_unique_posts', ascending=False).to_csv(f"{folder}/{folder}_user_summary.tsv", sep="\t", index=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Count posts per author from a JSONL file and export as TSV.")
