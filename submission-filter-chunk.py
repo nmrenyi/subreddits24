@@ -40,8 +40,6 @@ def convert_json_to_jsonl(input_json, output_jsonl, chunk_size=10000):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert JSON submissions file to JSONL with necessary fields.")
-    # parser.add_argument("input_json", help="Path to the input JSON file")
-    # parser.add_argument("output_jsonl", help="Path to save the output JSONL file")
     parser.add_argument('folder', type=str, help='Path to the input folder')
     parser.add_argument("--chunk_size", type=int, default=10000, help="Number of lines to process in each chunk")
     
