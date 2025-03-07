@@ -11,6 +11,9 @@ There could be a lot of files and scripts in the repository, but you only need t
 
 You can find similar, but more comprehensive file structure in [chinesefood](chinesefood/), because the subreddit of chinesefood is much smaller and the data files could fit better on GitHub.
 
+Here're the [explanations on the keys of the comments file](https://chatgpt.com/share/67cb0d96-9478-8010-8e51-a7e4f24c903c) and the [explanations of the submissions file](https://chatgpt.com/share/67cb0e1c-974c-8010-be11-305cf7a3cad6), by ChatGPT :)
+
+
 ## Details of data processing
 
 ### File structure
