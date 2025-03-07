@@ -1,5 +1,8 @@
 .DS_Store
 # chinesefood/
+chinesefood/chinesefood_comments
+chinesefood/chinesefood_submissions
+
 raw/
 unpopularopinion/
 view.ipynb
