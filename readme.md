@@ -1,6 +1,5 @@
 # Subreddit Processing
 
-This repository is for the code to process the subreddit dataset from https://www.reddit.com/r/pushshift/comments/1itme1k/separate_dump_files_for_the_top_40k_subreddits/. You can find the torrent in this file  `./reddit-1614740ac8c94505e4ecb9d88be8bed7b6afddd4.torrent` in the repository. A torrent downloader is needed to download the files from the torrent.
 
 ## File structure
 Here's the full file structure on my computer. The GitHub version contains all the Python scripts, but not all the data files, due to size limit.
@@ -46,6 +45,8 @@ Here's the full file structure on my computer. The GitHub version contains all t
 ## Data Processing
 
 ### Download raw data
+The subreddit dataset is from https://www.reddit.com/r/pushshift/comments/1itme1k/separate_dump_files_for_the_top_40k_subreddits/. You can find the torrent in this file  `./reddit-1614740ac8c94505e4ecb9d88be8bed7b6afddd4.torrent` in the repository. A torrent downloader is needed to download the files from the torrent.
+
 We can get the `<theme>_comments.zst` and `<theme>_submissions.zst` after downloading the selected `<theme>` from the torrent. Decompress the `.zst` files, and we can get `<theme>_comments` (the comments on the subreddit posts) and `<theme>_submissions` (the subreddit posts). Both the comments and the submissions files are consist of json lines, with each line in a file representing a json, i.e., one commment or one post, respectively.
 
 
