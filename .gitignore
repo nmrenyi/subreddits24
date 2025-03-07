@@ -4,7 +4,10 @@ chinesefood/chinesefood_comments
 chinesefood/chinesefood_submissions
 
 raw/
-unpopularopinion/
+unpopularopinion/*
+!unpopularopinion/unpopularopinion_comments.10000.jsonl
+!unpopularopinion/unpopularopinion_submissions.10000.jsonl
+
 view.ipynb
 
 # Byte-compiled / optimized / DLL files
