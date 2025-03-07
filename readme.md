@@ -1,5 +1,15 @@
 # Subreddit Processing
+This repository holds the code to process [a subreddit dataset](https://www.reddit.com/r/pushshift/comments/1itme1k/separate_dump_files_for_the_top_40k_subreddits/).
 
+## Quick start
+
+There could be a lot of files and scripts in the repository, but you only need to look into several files to get to know the data.
+
+1. [unpopularopinion_comments.10000.jsonl](unpopularopinion/unpopularopinion_comments.10000.jsonl). It contains first 10,000 lines of the cleaned comments file of unpopularopinion subreddit. The unsampled cleaned comments file (47,519,950 lines) could be found in [Google Drive](https://drive.google.com/file/d/1tNkd2uLZaztnPTpINwTChJkEqV0ndh1D/view?usp=share_link).
+2. [unpopularopinion_submissions.10000.jsonl](unpopularopinion/unpopularopinion_submissions.10000.jsonl). It contains first 10,000 lines of the cleaned submissions file of unpopularopinion subreddit. The unsampled cleaned submissions file (2,394,871 lines) could be found in [Google Drive](https://drive.google.com/file/d/1xupWizenf6_djj4od4CV_tETncHACgDT/view?usp=share_link).
+3. [unpopular_user_summary.tsv](unpopularopinion/unpopularopinion_user_summary.tsv). Per user based #post, #comments, #comments_on_unique_posts.
+
+You can find similar, but more comprehensive file structure in [chinesefood](chinesefood/), because the subreddit of chinesefood is much smaller and the data files could fit better on GitHub.
 
 ## File structure
 Here's the full file structure on my computer. The GitHub version contains all the Python scripts, but not all the data files, due to size limit.
