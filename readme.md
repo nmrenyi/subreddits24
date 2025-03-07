@@ -2,6 +2,46 @@
 
 This repository is for the code to process the subreddit dataset from https://www.reddit.com/r/pushshift/comments/1itme1k/separate_dump_files_for_the_top_40k_subreddits/. You can find the torrent in this file  `./reddit-1614740ac8c94505e4ecb9d88be8bed7b6afddd4.torrent` in the repository. A torrent downloader is needed to download the files from the torrent.
 
+## File structure
+Here's the full file structure on my computer. The GitHub version contains all the Python scripts, but not all the data files, due to size limit.
+
+.
+├── chinesefood
+│   ├── chinesefood_comments                 # raw comments data
+│   ├── chinesefood_submissions              # raw submission data
+│   ├── chinesefood_comments.jsonl           # processed comments (json line)
+│   ├── chinesefood_submissions.jsonl        # processed submissions (json line)
+│   ├── chinesefood_comments.db              # processed comments in database
+│   ├── chinesefood_submissions.db           # processed submissions in database
+│   ├── chinesefood_user_comment_count.tsv   # #comments and #comments_on_unique_posts per user
+│   ├── chinesefood_user_post_count.tsv      # #posts per user
+│   └── chinesefood_user_summary.tsv         # Summary of user activity (comments & posts)
+├── unpopularopinion
+│   ├── unpopularopinion_comments             # raw comments data
+│   ├── unpopularopinion_submissions          # raw submission data
+│   ├── unpopularopinion_comments.jsonl       # processed comments (json line)
+│   ├── unpopularopinion_submissions.jsonl    # processed submissions (json line)
+│   ├── unpopularopinion_comments.db          # processed comments in database
+│   ├── unpopularopinion_submissions.db       # processed submissions in database
+│   ├── unpopularopinion_user_comment_count.tsv  # #comments and #comments_on_unique_posts per user
+│   ├── unpopularopinion_user_post_count.tsv     # #posts per user
+│   ├── unpopularopinion_user_summary.tsv        # Summary of user activity (comments & posts)
+│   ├── unpopularopinion_comments.10000.jsonl    # Sample of 10,000 comments
+│   └── unpopularopinion_submissions.10000.jsonl # Sample of 10,000 submissions
+├── comment-filter-fields-chunk.py           # Script for filtering necessary fields in comments (chunked processing)
+├── comment-filter-fields.py                 # Script for filtering necessary fields in comments (full processing)
+├── comments-db.py                           # Script to store comments in a database for efficient querying
+├── submission-filter-chunk.py               # Script for filtering necessary fields in submissions (chunked processing)
+├── submission-filter-fields.py              # Script for filtering necessary fields in submissions (full processing)
+├── submissions-db.py                        # Script to store submissions in a database for efficient querying
+├── count-comment.py                         # Script to count comments for each user
+├── count-submission.py                      # Script to count posts for each user
+├── count-summary.py                         # Script to generate a user activity summary from counts
+├── user-summary-db.py                      # Script to calculate user activity summary from the database (could be very slow)
+├── user-summary.py                         # Script to generate user activity summary from json line files (could face memory capability problems)
+├── reddit-1614740ac8c94505e4ecb9d88be8bed7b6afddd4.torrent  # Torrent file for downloading Reddit dataset
+└── readme.md
+
 
 ## Data Processing
 
