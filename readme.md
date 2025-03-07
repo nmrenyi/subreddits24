@@ -13,7 +13,7 @@ You can find similar, but more comprehensive file structure in [chinesefood](chi
 
 ## File structure
 Here's the full file structure on my computer. The GitHub version contains all the Python scripts, but not all the data files, due to size limit.
-
+```
 .
 ├── chinesefood
 │   ├── chinesefood_comments                 # raw comments data
@@ -50,7 +50,7 @@ Here's the full file structure on my computer. The GitHub version contains all t
 ├── user-summary.py                         # Script to generate user activity summary from json line files (could face memory capability problems)
 ├── reddit-1614740ac8c94505e4ecb9d88be8bed7b6afddd4.torrent  # Torrent file for downloading Reddit dataset
 └── readme.md
-
+```
 
 ## Data Processing
 
