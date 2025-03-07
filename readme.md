@@ -11,7 +11,9 @@ There could be a lot of files and scripts in the repository, but you only need t
 
 You can find similar, but more comprehensive file structure in [chinesefood](chinesefood/), because the subreddit of chinesefood is much smaller and the data files could fit better on GitHub.
 
-## File structure
+## Details of data processing
+
+### File structure
 Here's the full file structure on my computer. The GitHub version contains all the Python scripts, but not all the data files, due to size limit.
 ```
 .
@@ -52,15 +54,15 @@ Here's the full file structure on my computer. The GitHub version contains all t
 └── readme.md
 ```
 
-## Data Processing
+### Data Processing
 
-### Download raw data
+#### Download raw data
 The subreddit dataset is from https://www.reddit.com/r/pushshift/comments/1itme1k/separate_dump_files_for_the_top_40k_subreddits/. You can find the torrent in this file  `./reddit-1614740ac8c94505e4ecb9d88be8bed7b6afddd4.torrent` in the repository. A torrent downloader is needed to download the files from the torrent.
 
 We can get the `<theme>_comments.zst` and `<theme>_submissions.zst` after downloading the selected `<theme>` from the torrent. Decompress the `.zst` files, and we can get `<theme>_comments` (the comments on the subreddit posts) and `<theme>_submissions` (the subreddit posts). Both the comments and the submissions files are consist of json lines, with each line in a file representing a json, i.e., one commment or one post, respectively.
 
 
-### Clean raw data
+#### Clean raw data
 There are several challenges in processing the comments and the submissions files.
 
 1. Size. `unpopularopinion_comments` takes up 64G, while `unpopular_submissions` takes up 5.4G.
@@ -71,7 +73,7 @@ We used Python scripts `comments-filter-fields-chunk.py` and `submission-filter-
 
 After the processing, the size of `unpopularopinion_comments.jsonl` and `unpopularopinion_submissions.jsonl` shrinked to 14G and 1.9G, respectively. These files are much smaller in size, much more concise and well-formatted in keys.
 
-### Count user comments and posts count
+#### Count user comments and posts count
 From now on, we work on `<theme>/<theme>_comments.jsonl` and `<theme>/<theme>_submissions.jsonl`, rather than the raw data.
 
 We can count #post of each user from `<theme>/<theme>_submissions.jsonl` and calculate #comments, #comments_on_unique_posts from `<theme>/<theme>_comments.jsonl`, using `count-submission.py` and `count-comment.py`, respectively. After this, we got `<theme>/<theme>_user_comment_count.tsv` and `<theme>/<theme>_user_post_count.tsv`
@@ -79,7 +81,7 @@ We can count #post of each user from `<theme>/<theme>_submissions.jsonl` and cal
 Finally, we run `count-summary.py`, using the two files generated just now, to get the `<theme>/<theme>_user_summary.tsv`
 
 
-### Into database
+#### Into database
 
 As the size of `unpopularopinion_comments.jsonl` (14G) and `unpopularopinion_submissions.jsonl` (1.9G) is still quite big to operate directly in memory, it's a good idea to put them into database for quick retrieval. Running `comments-db.py` and `submissions-db.py` and we can get the database version of the comments and submissions (`unpopularopinion_comments.db` and `unpopularopinion_submissions.db`), which offers a much more feasible solution for situations where comments and submissions files are too big.
 
