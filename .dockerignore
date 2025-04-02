@@ -1,0 +1,12 @@
+*.db
+__pycache__/
+*.pyc
+*.tsv
+*.torrent
+*.md
+*.toml
+*.lock
+llm_cost_estimate.csv
+*.jsonl
+*.db-journal
+chinesefood/
