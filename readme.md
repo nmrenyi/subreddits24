@@ -94,7 +94,7 @@ To build the Docker image:
 
     docker build -t subreddits-app .
 
-The data files are not included in the repository due to size. You can download them from [Google Drive](https://your-link-here) and place the `unpopularopinion/` folder in the root of the project.
+The data files are not included in the repository due to size. You can download them from [Google Drive](https://drive.google.com/drive/folders/1VCV6Hufef2HeAgraBMdgpUAkC6MPCw_N?usp=sharing) and place the `unpopularopinion/` folder in the root of the project.
 You will have to download the following files:
 * `already_processed.csv`
 * `authors_with_at_least_100_distinct_comments.csv`
