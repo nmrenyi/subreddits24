@@ -86,5 +86,27 @@ Finally, we run `count-summary.py`, using the two files generated just now, to g
 
 #### Into database
 
-As the size of `unpopularopinion_comments.jsonl` (14G) and `unpopularopinion_submissions.jsonl` (1.9G) is still quite big to operate directly in memory, it's a good idea to put them into database for quick retrieval. Running `comments-db.py` and `submissions-db.py` and we can get the database version of the comments and submissions (`unpopularopinion_comments.db` and `unpopularopinion_submissions.db`), which offers a much more feasible solution for situations where comments and submissions files are too big.
+As the size of `unpopularopinion_comments.jsonl` (14G) and `unpopularopinion_submissions.jsonl` (1.9G) is still quite big to operate directly in memory, it's a good idea to put them into database for quick retrieval. Running `comments-db.py` and `submissions-db.py` and we can get the database version of the comments and submissions (`unpopularopinion_toplevel_comments.db` and `unpopularopinion_submissions.db`), which offers a much more feasible solution for situations where top level comments and submissions files are too big.
 
+### Data Preprocessing 
+
+To build the Docker image:
+
+    docker build -t subreddits-app .
+
+The data files are not included in the repository due to size. You can download them from [Google Drive](https://drive.google.com/drive/folders/1VCV6Hufef2HeAgraBMdgpUAkC6MPCw_N?usp=sharing) and place the `unpopularopinion/` folder in the root of the project.
+You will have to download the following files:
+* `already_processed.csv`
+* `authors_with_at_least_100_distinct_comments.csv`
+* `bots.csv`
+* `posts_with_at_least_one_comment_from_selected_users.csv`
+* `unpopularopinion_toplevel_comments.db`
+* `unpopularopinion_submissions.db`
+
+To run the preprocessing:
+
+    docker run --rm \
+      -v $(pwd)/unpopularopinion:/unpopularopinion \
+      subreddits-app
+
+This command will also take care of mounting the data for you.
