@@ -17,6 +17,8 @@ FILE_AUTHORS_100_COMMENTS = "unpopularopinion/authors_100_comments.csv"
 FILE_POSTS_SELECTED_USERS = "unpopularopinion/posts_with_at_least_one_comment_from_selected_users.csv"
 FILE_AUTHORS_10_NEUTRAL = "unpopularopinion/authors_with_at_least_10_distinct_neutral_post_comments.csv"
 
+MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+SENTIMENT_PIPELINE = pipeline("sentiment-analysis", model=MODEL_NAME, truncation=True, max_length=512, tokenizer=MODEL_NAME)
 
 def get_db_connection(database: str = "comments") -> sqlite3.Connection:
     if database == "comments":
@@ -103,9 +105,7 @@ def get_posts_to_analyze(connection):
 
 
 def analyse_sentiment(content: list) -> list:
-    model_name = "cardiffnlp/twitter-roberta-base-sentiment-latest"
-    sentiment_pipeline = pipeline("sentiment-analysis", model=model_name, tokenizer=model_name)
-    return sentiment_pipeline(content)
+    return SENTIMENT_PIPELINE(content)
 
 
 def process_posts_sentiment(connection):
