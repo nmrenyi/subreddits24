@@ -13,7 +13,7 @@ DB_PATH_COMMENTS = "unpopularopinion/unpopularopinion_toplevel_comments.db"
 DB_PATH_SUBMISSIONS = "unpopularopinion/unpopularopinion_submissions.db"
 FILE_BOTS = "unpopularopinion/bots.csv"
 FILE_ALREADY_PROCESSED = "unpopularopinion/already_processed.csv"
-FILE_AUTHORS_100_COMMENTS = "unpopularopinion/authors_with_at_least_100_distinct_comments.csv"
+FILE_AUTHORS_100_COMMENTS = "unpopularopinion/authors_100_comments.csv"
 FILE_POSTS_SELECTED_USERS = "unpopularopinion/posts_with_at_least_one_comment_from_selected_users.csv"
 FILE_AUTHORS_10_NEUTRAL = "unpopularopinion/authors_with_at_least_10_distinct_neutral_post_comments.csv"
 
@@ -218,46 +218,40 @@ def create_neutral_sentiment_post_table():
 
 def filter_users_with_at_least_one_comment_on_at_least_10_neutral_posts():
     # create sentiment analysis for all posts that have comments of the authors in author list
-    create_neutral_sentiment_post_table()
+    # create_neutral_sentiment_post_table()
 
     # for each author, count on how many neutral sentiment post they commented on
     ## for each author, get a list of all post_ids they commented on
     ## count if at least 10 of these are in neutral_sentiment_post table
     ## if yes, keep the author
+
     df_authors = pd.read_csv(FILE_AUTHORS_100_COMMENTS)
-    authors_10_neutral = []
-    submissions_cursor = get_db_connection("submissions").cursor()
-    comments_cursor = get_db_connection("comments").cursor()
+    author_set = set(df_authors["author"])
 
-    # create set of all neutral post ids
-    query = f"SELECT post_id FROM neutral_sentiment_posts"
-    submissions_cursor.execute(query)
-    response = submissions_cursor.fetchall()
-    neutral_posts = {r[0] for r in response}
+    # Connect to comments DB and attach submissions DB
+    conn = get_db_connection("comments")
+    cursor = conn.cursor()
 
-    processed_authors_count = 0
-    total_authors = len(df_authors["author"])
-    for author in df_authors["author"]:
-        if processed_authors_count == 5:
-            break
-        query = f"SELECT parent_id FROM comments where author=(?)"
-        values = (author,)
-        comments_cursor.execute(query, values)
-        response = comments_cursor.fetchall()
-        post_ids = {post_id[0].replace("t3_", "") for post_id in response}
-        overlap = neutral_posts.intersection(post_ids)
+    cursor.execute(f"ATTACH DATABASE '{DB_PATH_SUBMISSIONS}' AS submissions_db")
+    cursor.execute("""
+        SELECT c.author
+        FROM comments c
+        JOIN submissions_db.neutral_sentiment_posts n
+          ON REPLACE(c.parent_id, 't3_', '') = n.post_id
+        GROUP BY c.author
+        HAVING COUNT(DISTINCT n.post_id) >= 10
+    """)
+    result_authors = [row[0] for row in cursor.fetchall()]
 
-        if len(overlap) >= 10:
-            authors_10_neutral.append(author)
+    # Filter to original author list
+    filtered_authors = [author for author in result_authors if author in author_set]
 
-        processed_authors_count += 1
-        print(f"Processed {processed_authors_count} out of {total_authors} total authors ({processed_authors_count/total_authors:.2f}%).")
-        print(f"So far, {len(authors_10_neutral)} neutral sentiment comment authors were found.")
+    percentage = round((len(filtered_authors) / len(author_set)) * 100, 2)
+    print(
+        f"Found {len(filtered_authors)} users from the original list with ≥10 comments on neutral posts ({percentage}%).")
+    print(f"Writing results to {FILE_AUTHORS_10_NEUTRAL} ...")
 
-
-    print(f"Found {len(authors_10_neutral)} users with at least 10 comments on neutral posts. Writing data to {FILE_AUTHORS_100_COMMENTS}. ...")
-    df = pd.DataFrame(authors_10_neutral, columns=["author"])
-    df.to_csv(FILE_AUTHORS_10_NEUTRAL, index=False)
+    pd.DataFrame(filtered_authors, columns=["author"]).to_csv(FILE_AUTHORS_10_NEUTRAL, index=False)
 
 
 def main():
