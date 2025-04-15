@@ -4,8 +4,7 @@ from transformers import AutoTokenizer
 import matplotlib.pyplot as plt
 
 # === Config ===
-DB_PATH_SUBMISSIONS = "unpopularopinion/preprocessing_data/unpopularopinion_submissions.db"
-N_SUBMISSIONS = 1000000  # Adjust this number as needed
+DB_PATH_SUBMISSIONS = "unpopularopinion/unpopularopinion_submissions.db"
 
 # === Load tokenizer ===
 model_name = "cardiffnlp/twitter-roberta-base-sentiment-latest"

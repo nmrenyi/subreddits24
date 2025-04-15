@@ -2,6 +2,8 @@ import sqlite3
 import pandas as pd
 import os
 import time
+
+from torch.distributed.nn import all_reduce
 from tqdm import tqdm
 from transformers import pipeline
 from transformers import logging
@@ -74,8 +76,9 @@ def filter_posts_with_at_least_one_comment_from_users(connection):
 
 def create_neutral_sentiment_table(connection):
     query = ("CREATE TABLE IF NOT EXISTS neutral_sentiment_posts ("
-             "post_id TEXT,"
-             "score REAL,"
+             "post_id TEXT PRIMARY KEY, "
+             "title_score REAL,"
+             "body_score REAL,"
              "FOREIGN KEY (post_id) REFERENCES posts(id));")
 
     cursor = connection.cursor()
@@ -137,7 +140,11 @@ def process_posts_sentiment(connection):
     pbar = tqdm(total=total_count, desc="Processing posts")
 
     failed_to_process = []
+    count = 0
     while True:
+        count += 1
+        if count == 5:
+            break
         batch_start_time = time.time()
         rows = cursor.fetchmany(batch_size)
         if not rows:
@@ -152,7 +159,8 @@ def process_posts_sentiment(connection):
             print(f"Removed {batch_size-len(rows)} rows since they have already been processed.")
 
         try:
-            sentiment_results = analyse_sentiment([row[1] for row in rows])
+            sentiment_results_title = analyse_sentiment([row[1] for row in rows])
+            sentiment_results_body = analyse_sentiment([row[2] for row in rows])
         except Exception as e:
             print(f"Failed processing batch with exception {e}")
             row_ids = [row[0] for row in rows]
@@ -161,16 +169,22 @@ def process_posts_sentiment(connection):
 
         neutral_sentiment_posts = []
         post_ids = []
-        for row, sentiment_result in zip(rows, sentiment_results):
+        for row, (title_sentiment_result, body_sentiment_result) in zip(rows, zip(sentiment_results_title, sentiment_results_body)):
             post_id = row[0]
-            if sentiment_result["label"] == "neutral":
-                score = round(sentiment_result["score"], 2)
-                neutral_sentiment_posts.append((post_id, score))
+            if title_sentiment_result["label"] == "neutral" or body_sentiment_result["label"] == "neutral":
+                title_score = -1
+                body_score = -1
+                if title_sentiment_result["label"] == "neutral":
+                    title_score = round(title_sentiment_result["score"], 2)
+                if body_sentiment_result["label"] == "neutral":
+                    body_score = round(body_sentiment_result["score"], 2)
+
+                neutral_sentiment_posts.append((post_id, title_score, body_score))
             post_ids.append(post_id)
 
         if neutral_sentiment_posts:
             select_cursor.executemany(
-                "INSERT OR REPLACE INTO neutral_sentiment_posts (post_id, score) VALUES (?, ?)",
+                f"INSERT OR REPLACE INTO neutral_sentiment_posts (post_id, title_score, body_score) VALUES (?, ?, ?)",
                 neutral_sentiment_posts
             )
         connection.commit()
@@ -217,8 +231,9 @@ def create_neutral_sentiment_post_table():
 
 
 def filter_users_with_at_least_one_comment_on_at_least_10_neutral_posts():
+    #TODO only keep those who have both psot and body neutral?
     # create sentiment analysis for all posts that have comments of the authors in author list
-    # create_neutral_sentiment_post_table()
+    create_neutral_sentiment_post_table()
 
     # for each author, count on how many neutral sentiment post they commented on
     ## for each author, get a list of all post_ids they commented on
