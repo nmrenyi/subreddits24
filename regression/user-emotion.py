@@ -32,7 +32,8 @@ def main() -> None:
     print("finished building user_post_comment_map")
 
 
-    user_comments_on_neutral_posts = { u: [] for u in user_post_comment_map }
+    user_comments_type_on_neutral_posts = { u: [] for u in user_post_comment_map }
+    user_comments_value_on_neutral_posts = { u: [] for u in user_post_comment_map }
 
     post_not_found = 0
     # 3️⃣  Open the DB once and reuse the cursor.
@@ -53,7 +54,9 @@ def main() -> None:
                 title_sent, body_sent = row if row else (None, None)
 
                 if title_sent == 'neutral' and body_sent == 'neutral':
-                    user_comments_on_neutral_posts[user].append(comment_id)
+                    comment_type, comment_value = get_comment_sentiment(comment_id)
+                    user_comments_type_on_neutral_posts[user].append(comment_type)
+                    user_comments_value_on_neutral_posts[user].append(comment_value)
                 elif title_sent is None and body_sent is None:
                     # print(f"Post {post_id} has no sentiment")
                     post_not_found += 1
@@ -62,8 +65,8 @@ def main() -> None:
     # 4️⃣  Save the results.
     pd.DataFrame(
         [
-            {'user': user, 'comment_ids': ' '.join(user_comments_on_neutral_posts[user])}
-            for user in user_comments_on_neutral_posts
+            {'user': user, 'comment_type': ' '.join(user_comments_type_on_neutral_posts[user]), 'comment_value': ' '.join(user_comments_value_on_neutral_posts[user])}
+            for user in user_comments_type_on_neutral_posts
         ]
     ).to_csv(
         DATA_DIR / "user_comments_on_neutral_posts.csv",

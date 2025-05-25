@@ -110,3 +110,15 @@ To run the preprocessing:
       subreddits-app
 
 This command will also take care of mounting the data for you.
+
+
+## Regression
+
+
+1. Only keep the validated authors in the comment
+2. For each comment
+   1. find the post
+   2. find the commentator
+   3. conduct the base emotion of the commentator, by averaging score of the comments that the commentator made on neutral posts
+3. comment emotion = (user base emotion, post title emotion, post body emotion)
+
