@@ -28,8 +28,11 @@ def get_comment_sentiment(db_conn, comment_id):
     cursor = db_conn.cursor()
     cursor.execute("SELECT top_comment_sentiment, top_comment_score FROM all_sentiment_comments WHERE comment_id = ?", (comment_id,))
     result = cursor.fetchone()
+    # retrieve comment time from comments table
+    cursor.execute("SELECT created_utc FROM comments WHERE id = ?", (comment_id,))
+    comment_time = cursor.fetchone()
     if result:
-        return result[0], result[1]
+        return result[0], result[1], comment_time[0]
     return None  # Don't raise an error
 
 def main():
@@ -61,7 +64,7 @@ def main():
                 comment_record['post_title_sentiment'], comment_record['post_title_score'], \
                 comment_record['post_body_sentiment'], comment_record['post_body_score'] = post_sentiment
 
-                comment_record['comment_sentiment_type'], comment_record['comment_sentiment_value'] = comment_sentiment
+                comment_record['comment_sentiment_type'], comment_record['comment_sentiment_value'], comment_record['comment_time'] = comment_sentiment
 
                 valid_comments.append(comment_record)
 
