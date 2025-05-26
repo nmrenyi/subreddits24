@@ -41,11 +41,14 @@ def main() -> None:
 
     # 2️⃣  Create the user → (post_id, comment_id) mapping.
     user_post_comment_map = build_user_post_comment_map(valid_comments)
+    comment_to_time = { c: t for c, t in zip(valid_comments['comment_id'], valid_comments['comment_time']) }
     print("finished building user_post_comment_map")
 
 
     user_comments_type_on_neutral_posts = { u: [] for u in user_post_comment_map }
     user_comments_value_on_neutral_posts = { u: [] for u in user_post_comment_map }
+    user_comments_time_on_neutral_posts = { u: [] for u in user_post_comment_map }
+
 
     post_not_found = 0
     with sqlite3.connect(COMMENT_DB_PATH) as conn_comment:
@@ -70,6 +73,7 @@ def main() -> None:
                         comment_type, comment_value = get_comment_sentiment(comment_id, comment_cursor)
                         user_comments_type_on_neutral_posts[user].append(comment_type)
                         user_comments_value_on_neutral_posts[user].append(comment_value)
+                        user_comments_time_on_neutral_posts[user].append(comment_to_time[comment_id])
                     elif title_sent is None and body_sent is None:
                         # print(f"Post {post_id} has no sentiment")
                         post_not_found += 1
@@ -78,7 +82,7 @@ def main() -> None:
     # 4️⃣  Save the results.
     pd.DataFrame(
         [
-            {'user': user, 'comment_type': ' '.join(user_comments_type_on_neutral_posts[user]), 'comment_value': ' '.join(map(str, user_comments_value_on_neutral_posts[user]))}
+            {'user': user, 'comment_type': ' '.join(user_comments_type_on_neutral_posts[user]), 'comment_value': ' '.join(map(str, user_comments_value_on_neutral_posts[user])), 'comment_time': ' '.join(map(str, user_comments_time_on_neutral_posts[user]))}
             for user in user_comments_type_on_neutral_posts
         ]
     ).to_csv(
